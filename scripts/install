@@ -104,7 +104,7 @@ ynh_script_progression "Adding system configurations related to $app..."
 #ynh_config_add_phpfpm
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
-ynh_config_add_nginx
+#ynh_config_add_nginx
 
 ### `ynh_config_add_systemd` is used to configure a systemd script for an app.
 ### It can be used for apps that use sysvinit (with adaptation) or systemd.

@@ -7,7 +7,7 @@ name = "Cacti monitoring tool"
 description.en = "Cacti provides a robust and extensible operational monitoring and fault management framework for users around the world. Is also a complete network graphing solution designed to harness the power of RRDTool's data storage and graphing functionality."
 description.fr = "Cacti fournit un cadre de surveillance opérationnelle et de gestion des pannes robuste et extensible pour les utilisateurs du monde entier. Il s'agit également d'une solution graphique réseau complète conçue pour exploiter la puissance des fonctionnalités de stockage de données et de création de graphiques de RRDTool."
 
-version = "1.2.28~ynh1"
+version = "1.2.24~ynh1"
 
 maintainers = ["pihomeserver"]
 
@@ -61,6 +61,6 @@ ram.runtime = "50M"
     # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
     packages = "cacti"
 
-    [resources.database]
+    #[resources.database]
     # This will automatically provision/deprovison a MySQL DB and store the corresponding credentials in settings $db_user, $db_name, $db_pwd
-    type = "mysql"
+    #type = "mysql"
