@@ -30,16 +30,6 @@ ram.runtime = "50M"
     type = "path"
     default = "/cacti"
 
-    [install.with_sftp]
-    ask.en = "Do you need a SFTP access?"
-    ask.fr = "Avez-vous besoin d'un accès SFTP ?"
-    type = "boolean"
-    default = false
-
-    [install.password]
-    type = "password"
-    optional = true
-
     [install.init_main_permission]
     type = "group"
     default = "admins"

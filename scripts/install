@@ -13,7 +13,6 @@ source /usr/share/yunohost/helpers
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
 
-password=$YNH_APP_ARG_PASSWORD
 app_nb=$YNH_APP_INSTANCE_NUMBER
 ssh_port=$(grep "^Port" /etc/ssh/sshd_config | awk '{print $2}')
 
@@ -22,14 +21,10 @@ ssh_port=$(grep "^Port" /etc/ssh/sshd_config | awk '{print $2}')
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --weight=2
 
-[ $with_sftp -eq 0 ] || [ "$password" != "" ] || ynh_die --message="You need to set a password to enable SFTP"
-
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 ynh_script_progression --message="Storing installation settings..." --weight=1
-
-ynh_app_setting_set --app=$app --key=password --value=$password
 
 #=================================================
 # NGINX CONFIGURATION
@@ -55,20 +50,8 @@ ynh_add_config --template="example-custom-nginx-config.conf" --destination="$ngi
 #=================================================
 ynh_script_progression --message="Configuring system user..."
 
-if [ $with_sftp -eq 1 ]
-then
-    groups="sftp.app"
-else
-    groups=""
-fi
-
-    ynh_system_user_create --username=$app --home_dir="$install_dir" --groups="$groups"
-
-if [ $with_sftp -eq 1 ]
-then
-    # Add the password to this user
-    chpasswd <<< "${app}:${password}"
-fi
+groups=""
+ynh_system_user_create --username=$app --home_dir="$install_dir" --groups="$groups"
 
 #=================================================
 # SPECIFIC SETUP
@@ -78,12 +61,6 @@ fi
 
 mkdir -p "$install_dir/www"
 
-# if [ $with_sftp -eq 1 ]
-# then
-#     ynh_add_config --template="../sources/www/index.html" --destination="$install_dir/www/index.html"
-# else
-#     ynh_add_config --template="../sources/www/index_no_sftp.html" --destination="$install_dir/www/index.html"
-# fi
 ynh_add_config --template="../sources/www/index.php" --destination="$install_dir/www/index.php"
 
 chown -R $app:www-data "$install_dir"
