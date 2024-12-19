@@ -38,7 +38,7 @@ ram.runtime = "50M"
     ask.en = "Choose a PHP version you want to use for your app"
     ask.fr = "Choisissez une version PHP que vous souhaitez utiliser pour votre application"
     type = "select"
-    choices = ["none", "7.4", "8.0", "8.1", "8.2", "8.3"]
+    choices = ["7.4", "8.0", "8.1", "8.2", "8.3"]
     default = "8.3"
 
 [resources]
@@ -50,7 +50,7 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "nginx"  # Kind of "dummy" value to be sure to have a non-empty dep list
+    packages = "cacti"
     packages_from_raw_bash = """
         if [[ "$phpversion" != none ]]; then
             echo "php${phpversion}-fpm"
