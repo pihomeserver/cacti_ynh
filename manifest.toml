@@ -1,31 +1,23 @@
-#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/manifest.v2.schema.json
-
 packaging_format = 2
 
 id = "cacti"
-name = "Cacti monitoring tool"
-description.en = "Cacti provides a robust and extensible operational monitoring and fault management framework for users around the world. Is also a complete network graphing solution designed to harness the power of RRDTool's data storage and graphing functionality."
-description.fr = "Cacti fournit un cadre de surveillance opérationnelle et de gestion des pannes robuste et extensible pour les utilisateurs du monde entier. Il s'agit également d'une solution graphique réseau complète conçue pour exploiter la puissance des fonctionnalités de stockage de données et de création de graphiques de RRDTool."
+name = "Cacti monitoring"
+description.en = "Custom Web app with SFTP access to serve static (HTML, CSS, JS) and PHP files"
+description.fr = "Application Web personnalisée avec accès SFTP pour servir des fichiers statiques (HTML, CSS, JS) et PHP"
 
 version = "1.2.24~ynh1"
 
-maintainers = ["pihomeserver"]
+maintainers = []
 
 [upstream]
-license = "free"
-website = "https://www.cacti.net/"
-userdoc = "https://docs.cacti.net/README.md#cacti-overview"
-code = "https://github.com/cacti/"
+license = "GPL-3.0-only"
 
 [integration]
-yunohost = ">= 12.0.0"
-helpers_version = "2.1"
-
+yunohost = ">= 11.2.4"
 architectures = "all"
-multi_instance = false
+multi_instance = true
 ldap = "not_relevant"
 sso = "not_relevant"
-
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -38,6 +30,16 @@ ram.runtime = "50M"
     type = "path"
     default = "/cacti"
 
+    [install.with_sftp]
+    ask.en = "Do you need a SFTP access?"
+    ask.fr = "Avez-vous besoin d'un accès SFTP ?"
+    type = "boolean"
+    default = false
+
+    [install.password]
+    type = "password"
+    optional = true
+
     [install.init_main_permission]
     type = "group"
     default = "admins"
@@ -46,15 +48,25 @@ ram.runtime = "50M"
     ask.en = "Choose a PHP version you want to use for your app"
     ask.fr = "Choisissez une version PHP que vous souhaitez utiliser pour votre application"
     type = "select"
-    choices = ["8.0", "8.1", "8.2", "8.3"]
+    choices = ["none", "7.4", "8.0", "8.1", "8.2", "8.3"]
     default = "8.3"
 
-    [install.admin]
-    type = "user"
+    [install.database]
+    ask.en = "Do you need a database?"
+    ask.fr = "Avez-vous besoin d'une base de données ?"
+    type = "select"
+    choices = [ "none", "mysql", "postgresql" ]
+    default = "none"
+
+    [install.custom_error_file]
+    ask.en = "Activate the custom error file use"
+    ask.fr = "Activer l'utilisation du fichier d'erreur personnalisé"
+    type = "boolean"
+    default = false
+    help = "Once custom error enabled, you can add/create a custom `404.html` file in a directory `www/error`."
 
 [resources]
     [resources.system_user]
-    allow_email = true
 
     [resources.install_dir]
 
@@ -62,4 +74,23 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.apt]
-    packages = "cacti"
+    packages = "nginx"  # Kind of "dummy" value to be sure to have a non-empty dep list
+    packages_from_raw_bash = """
+        if [[ "$database" == "mysql" ]]; then
+            echo "mariadb-server"
+
+            if [[ "$phpversion" != none ]]; then
+                echo "php${phpversion}-mysql"
+            fi
+        elif [[ "$database" == "postgresql" ]]; then
+            echo "postgresql postgresql-contrib"
+
+            if [[ "$phpversion" != none ]]; then
+                echo "php${phpversion}-pgsql"
+            fi
+        fi
+
+        if [[ "$phpversion" != none ]]; then
+            echo "php${phpversion}-fpm"
+        fi
+    """
