@@ -32,27 +32,6 @@ ynh_script_progression --message="Storing installation settings..." --weight=1
 ynh_app_setting_set --app=$app --key=password --value=$password
 
 #=================================================
-# CREATE A MYSQL DATABASE
-#=================================================
-
-if [ $database != "none" ]; then
-    ynh_script_progression --message="Creating a database..." --weight=2
-
-    db_name=$(ynh_sanitize_dbid --db_name=$app)
-    db_user=$db_name
-    db_pwd=$(ynh_string_random --length=30)
-    ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-    ynh_app_setting_set --app=$app --key=db_user --value=$db_user
-    ynh_app_setting_set --app=$app --key=db_pwd --value=$db_pwd
-
-    if [ $database == "mysql" ]; then
-        ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
-    elif [ $database == "postgresql" ]; then
-        ynh_psql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
-    fi
-fi
-
-#=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Configuring NGINX web server..." --weight=2
@@ -66,13 +45,6 @@ then
     ynh_add_config --template="nginx-php.conf" --destination="$nginx_extra_conf_dir/php.conf"
     YNH_PHP_VERSION="$phpversion"
 fi
-
-if [ $custom_error_file -eq 1 ]
-then
-    # Add the custom error build with the application
-    ynh_add_config --template="nginx-code-error.conf" --destination="$nginx_extra_conf_dir/error-code.conf"
-fi
-
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
