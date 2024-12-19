@@ -17,6 +17,8 @@ ynh_script_progression --message="Configuring NGINX web server..." --weight=2
 nginx_extra_conf_dir="/etc/nginx/conf.d/$domain.d/$app.d"
 mkdir -p "$nginx_extra_conf_dir"
 
+echo "/etc/nginx/conf.d/$domain.d/$app.d - $phpversion - "
+
 # Prepare nginx extra conf
 if [ $phpversion != "none" ]
 then
