@@ -1,6 +1,8 @@
 #!/bin/bash
 
 #=================================================
+# GENERIC START
+#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -8,18 +10,28 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
-# REMOVE SYSTEM CONFIGURATIONS
+# STANDARD REMOVE
 #=================================================
-ynh_script_progression "Removing system configurations related to $app..."
 
-#ynh_config_remove_nginx
+#=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=2
 
-ynh_safe_rm "/etc/cron.d/$app"
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+ynh_secure_remove --file="/etc/nginx/conf.d/$domain.d/$app.d"
 
-ynh_safe_rm "/etc/$app"
+#=================================================
+# REMOVE PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing PHP-FPM configuration..."
+
+# Remove the dedicated PHP-FPM config
+ynh_remove_fpm_config
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression "Removal of $app completed"
+ynh_script_progression --message="Removal of $app completed" --last
